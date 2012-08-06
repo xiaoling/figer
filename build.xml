@@ -1,0 +1,52 @@
+<project name="figer" default="build" basedir=".">
+    <description>
+	FiGER
+    </description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="lib" location="lib"/>
+  <property name="data" location="data"/>
+  <property name="build" location="bin"/>
+  <property name="dist" location="dist"/>
+  
+  
+  <target name="init">
+  	<tstamp/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+
+  <target name="compile" depends="init" description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac nowarn="on" includeantruntime="false" srcdir="${src}" classpath="${lib}/xom.jar:${lib}/commons-lang-2.4.jar:${lib}/trove.jar:${lib}/joda-time.jar:${lib}/stanford-corenlp-2012-01-08.jar:${lib}/protobuf-java-2.4.1.jar:${lib}/fastutil.jar:${lib}/jgraph.jar:${lib}/jgrapht.jar" destdir="${build}">
+    </javac>
+  </target>
+
+	<target name="check-model">
+		 <condition property="model.missing">
+		 	<not>
+	    		<available file="config/figer.model" />
+			</not>
+		 </condition>
+	</target>
+
+	<target name="model" depends="check-model" if="model.missing">
+		<gunzip src="figer.model.gz" dest="config"/>
+	</target> 
+	
+	
+  <target name="build" description="build" depends="compile,model">
+    <jar jarfile="${dist}/figer-${DSTAMP}.jar"  >
+    	<fileset dir="${build}" />
+    	<fileset dir="${src}" />
+    </jar>
+	<copy file="${dist}/figer-${DSTAMP}.jar" tofile="figer.jar"/>
+  </target>
+  
+  
+  <target name="clean" description="clean up" >
+    <!--  Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>

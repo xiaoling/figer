@@ -1,0 +1,48 @@
+figer.jar:lib/commons-lang-2.4.jar:lib/fastutil.jar:lib/jgraph.jar:lib/jgrapht.jar:lib/joda-time.jar:lib/protobuf-java-2.4.1.jar:lib/stanford-corenlp-2011-12-27-models.jar:lib/stanford-corenlp-2012-01-08.jar:lib/trove.jar:lib/xom.jar
+========PARAMETERS=========
+eval	true
+singleSentences	true
+method	PERCEPTRON
+preprocess	true
+generateFeature	true
+testFile	aaai/exp.txt
+debugLevel	1
+useModel	true
+debugModel	false
+MAX_ITER_NUM	15
+segmentation	fale
+modelFile	config/figer.model
+brownFile	config/brown-c1000.txt.gz
+labelFile	aaai/exp.label
+writeModel	false
+testWhenLearn	false
+instanceClass	edu.washington.cs.figer.data.MultiLabelInstance
+trainFile	train.data
+inputSegments	aaai/gold.segment
+tokenized	true
+FEATURE_FREQ_THRESHOLD	1
+outputFile	aaai/exp.out
+prob_threshold	0.3
+tagset	config/types.map
+===========================
+labels:	[Label:/person/terrorist, Label:/event/terrorist_attack, Label:/organization/terrorist_organization, Label:/person, Label:/location, Label:/location/city, Label:/person/athlete, Label:/living_thing, Label:/organization, Label:/music, Label:/person/artist, Label:/person/politician, Label:/person/author, Label:/building, Label:/art/film, Label:/event, Label:/organization/company, Label:/person/actor, Label:/written_work, Label:/organization/educational_institution, Label:/location/body_of_water, Label:/person/musician, Label:/broadcast_program, Label:/organization/sports_team, Label:/product/ship, Label:/astral_body, Label:/transportation/road, Label:/game, Label:/person/director, Label:/building/airport, Label:/event/military_conflict, Label:/government/political_party, Label:/geography/mountain, Label:/military, Label:/chemistry, Label:/geography/island, Label:/software, Label:/people/ethnicity, Label:/product/airplane, Label:/event/election, Label:/event/sports_event, Label:/disease, Label:/person/architect, Label:/building/sports_facility, Label:/language, Label:/play, Label:/product/car, Label:/organization/airline, Label:/location/bridge, Label:/law, Label:/medicine/drug, Label:/award, Label:/title, Label:/government_agency, Label:/location/county, Label:/medicine/medical_treatment, Label:/internet/website, Label:/art, Label:/person/monarch, Label:/body_part, Label:/organization/sports_league, Label:/building/hospital, Label:/person/religious_leader, Label:/location/cemetery, Label:/product/weapon, Label:/person/coach, Label:/event/natural_disaster, Label:/food, Label:/person/doctor, Label:/livingthing/animal, Label:/train, Label:/person/engineer, Label:/broadcast_network, Label:/building/restaurant, Label:/geography/glacier, Label:/rail/railway, Label:/product/instrument, Label:/metropolitan_transit/transit_line, Label:/government/government, Label:/product, Label:/building/theater, Label:/computer/programming_language, Label:/building/power_station, Label:/god, Label:/event/attack, Label:/medicine/symptom, Label:/building/hotel, Label:/person/soldier, Label:/product/mobile_phone, Label:/product/spacecraft, Label:/biology, Label:/product/engine_device, Label:/finance/currency, Label:/time, Label:/park, Label:/location/country, Label:/news_agency, Label:/religion/religion, Label:/organization/fraternity_sorority, Label:/education/department, Label:/newspaper, Label:/computer/algorithm, Label:/product/computer, Label:/building/dam, Label:/transit, Label:/education/educational_degree, Label:/visual_art/color, Label:/product/camera, Label:/event/protest, Label:/building/library, Label:/finance/stock_exchange, Label:/broadcast/tv_channel, Label:/location/province]
+Adding annotator tokenize
+Adding annotator ssplit
+Adding annotator pos
+Loading POS Model [edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger] ... Loading default properties from trained tagger edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger
+Reading POS tagger model from edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger ... done [1.1 sec].
+done [1.1 sec].
+Adding annotator lemma
+Adding annotator ner
+Loading classifier from edu/stanford/nlp/models/ner/conll.distsim.crf.ser.gz ... done [2.2 sec].
+Adding annotator parse
+Loading parser from serialized file edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz ... done [1.1 sec].
+..................................................................................................................................................................................................................................................................................................................................................................................................................................................
+strict	prec:	0.523	rec:	0.522	f1:	0.523
+294.0	562.0	294.0	563.0
+loose micro	prec:	0.724	rec:	0.700	f1:	0.712
+406.9690476190478	562.0	393.8333333333333	563.0
+loose macro	prec:	0.701	rec:	0.692	f1:	0.696
+537.0	766.0	537.0	776.0
+hamming loss:	0.829	465	561
+[TIMING]TOTAL takes 198 seconds.

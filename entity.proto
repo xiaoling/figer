@@ -1,0 +1,22 @@
+
+option java_package = "edu.washington.cs.figer.data";
+option java_outer_classname = "EntityProtos";
+
+message Mention {
+	optional int32 start = 1;
+	optional int32 end = 2;
+	repeated string tokens = 3;
+	repeated string pos_tags = 4;
+	repeated Dependency deps = 5;
+	message Dependency{
+		optional string type = 1;
+		optional int32 gov = 2;
+		optional int32 dep = 3;
+	}
+	optional string entity_name = 6;
+	repeated string features = 7;
+	repeated string labels = 8;
+	optional int32 sentid = 9;
+	optional string fileid = 10;
+}
+
