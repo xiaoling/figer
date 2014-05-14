@@ -22,6 +22,8 @@ It uses the following external libraries:
 
 One can test the trained model on the evaluation data or new data as they wish. 
 
+Download [Model](https://www.dropbox.com/sh/fg9geomqxhh54qw/AABDS9BZmct9-ku-D0J_v5Dxa/figer.model.gz) and save it at the root directory. 
+
 ## Replicate the experiments
 
 To run the experiments in the AAAI-12 paper, you can proceed as follows:
@@ -39,4 +41,6 @@ that `testFile` MUST take a file with .txt extension. Then run:
 # Training Data
 
 The training data `train.tar.gz` is serialized by [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
+
+Download (link)[https://www.dropbox.com/sh/fg9geomqxhh54qw/AAC6LWI4gsnCXuPeQWV5b5yNa/train.tar.gz]
 

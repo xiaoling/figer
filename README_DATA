@@ -1,1 +1,0 @@
-The training data is serialized by Protocol Buffer (http://code.google.com/p/protobuf/). Please see "entity.proto" in the code package for the definition details.
