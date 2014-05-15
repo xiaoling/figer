@@ -18,7 +18,10 @@ libraryDependencies ++= Seq(
   "de.jollyday" % "jollyday" % "0.4.7",
   "joda-time" % "joda-time" % "2.1",
   "net.sf.trove4j" % "trove4j" % "3.0.1",
+  "junit" % "junit" % "4.8.1",
   "com.google.protobuf" % "protobuf-java" % "2.4.1"
 )
+
+EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
 
 EclipseKeys.createSrc := EclipseCreateSrc.Default + EclipseCreateSrc.Resource

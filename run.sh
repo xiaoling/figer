@@ -1,5 +1,6 @@
-CP=figer.jar
-CP=$CP:$(echo lib/*.jar | tr ' ' ':')
+#CP=figer.jar
+#CP=$CP:$(echo lib/*.jar | tr ' ' ':')
 
-echo $CP
-java -Xmx24G -cp $CP edu.washington.cs.figer.Main $@ 
+#echo $CP
+#java -Xmx24G -cp $CP edu.washington.cs.figer.Main $@ 
+sbt "runMain edu.washington.cs.figer.Main $@" 
