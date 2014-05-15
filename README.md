@@ -29,5 +29,5 @@ that `testFile` MUST take a file with .txt extension. Then run:
 
 The training data `train.tar.gz` is serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
 
-Download (link)[https://www.dropbox.com/sh/fg9geomqxhh54qw/AAC6LWI4gsnCXuPeQWV5b5yNa/train.tar.gz]
+Download [link](https://www.dropbox.com/sh/fg9geomqxhh54qw/AAC6LWI4gsnCXuPeQWV5b5yNa/train.tar.gz)
 

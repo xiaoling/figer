@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Scanner;
 
-import edu.washington.cs.figer.util.FileUtil;
 import edu.washington.cs.figer.util.X;
 
 public class MapType {

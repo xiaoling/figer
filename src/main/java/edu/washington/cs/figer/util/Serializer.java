@@ -3,8 +3,10 @@ package edu.washington.cs.figer.util;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.zip.GZIPInputStream;
 
 public class Serializer {
 	public static boolean serialize(Object obj, String filename) {
@@ -29,11 +31,14 @@ public class Serializer {
 		if (filename == null) {
 			return null;
 		}
-		FileInputStream fis = null;
+		InputStream fis = null;
 		ObjectInputStream in = null;
 		Object obj = null;
 		try {
 			fis = new FileInputStream(filename);
+			if (filename.endsWith(".gz")) {
+				fis = new GZIPInputStream(fis);
+			}
 			in = new ObjectInputStream(fis);
 			obj = in.readObject();
 			in.close();
