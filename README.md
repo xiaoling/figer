@@ -5,6 +5,8 @@ This distribution contains the source code for the experiments presented in the 
 
     Xiao Ling and Daniel S. Weld (2012). "Fine-Grained Entity Recognition", in Proceedings OF THE TWENTY-SIXTH AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE (AAAI), 2012.
 
+[PDF](http://xiaoling.github.com/pubs/ling-aaai12.pdf)
+
 # Testing
 
 One can test the trained model on the evaluation data or new data as they wish. 
