@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public class FileUtil {
 	public static String getTextFromFile(String filename) {
@@ -32,8 +34,12 @@ public class FileUtil {
 	public static List<String> getLinesFromFile(String filename) {
 		LinkedList<String> lines = null;
 		try {
+			InputStream in = new FileInputStream(filename);
+			if (filename.endsWith(".gz")) {
+				in = new GZIPInputStream(in);
+			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(filename), "UTF-8"));
+					in, "UTF-8"));
 			lines = new LinkedList<String>();
 			String line = null;
 			while ((line = reader.readLine()) != null) {

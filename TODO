@@ -1,0 +1,13 @@
+
+significance test
+
+diff aaai/exp.label /homes/gws/xiaoling/dataset/news12/true.label2
+
+classification:
+- more data: include all wikipedia
+- better technique: posterior reg. (Victoria Lin) or vowpal wabbit
+
+features:
+- use rebuilt feature extraction (see profiler.pattern.PatternExtraction in holism)
+
+implements as a stanford annotator

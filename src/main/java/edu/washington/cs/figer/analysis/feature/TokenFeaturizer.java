@@ -5,13 +5,16 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.ac.susx.informatics.Morpha;
 import edu.washington.cs.figer.data.EntityProtos.Mention;
 import edu.washington.cs.figer.ml.Model;
-import edu.washington.cs.figer.util.Debug;
 
 public class TokenFeaturizer implements AbstractFeaturizer {
-
+	private static final Logger logger = LoggerFactory.getLogger(TokenFeaturizer.class);
+ 
 	public static Morpha morpha = null;
 	public static Hashtable<String, String> cache = new Hashtable<String, String>();
 
@@ -32,9 +35,9 @@ public class TokenFeaturizer implements AbstractFeaturizer {
 						return token;
 					}
 				} catch (IOException e) {
-					Debug.vpl("morpha err:" + key + "@@");
+					logger.warn("morpha err:" + key + "@@");
 				} catch (Error e) {
-					Debug.vpl("morpha err:" + key + "@@");
+					logger.warn("morpha err:" + key + "@@");
 				}
 			} else {
 				cache.put(key, token);
@@ -47,7 +50,7 @@ public class TokenFeaturizer implements AbstractFeaturizer {
 	@Override
 	public void apply(Mention m, ArrayList<String> features, Model model) {
 		for (int i = m.getStart(); i < m.getEnd(); i++) {
-			features.add("SELF_TKN_" + m.getTokens(i)/*getToken(m.getTokens(i), m.getPosTags(i))*/);
+			features.add("SELF_TKN_" + m.getTokens(i));
 		}
 	}
 

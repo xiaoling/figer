@@ -1,13 +1,22 @@
 package edu.washington.cs.figer;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
-import org.apache.commons.lang.StringUtils;
+import java.util.Iterator;
+import java.util.Random;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.stanford.nlp.util.Pair;
 import edu.washington.cs.figer.analysis.MapType;
-import edu.washington.cs.figer.analysis.MultiLabelPerceptronNERClassifier;
-import edu.washington.cs.figer.analysis.NERClassifier;
 import edu.washington.cs.figer.analysis.Preprocessing;
 import edu.washington.cs.figer.analysis.feature.NERFeature;
 import edu.washington.cs.figer.data.DataSet;
@@ -27,7 +36,9 @@ import edu.washington.cs.figer.ml.Learner;
 import edu.washington.cs.figer.ml.Model;
 import edu.washington.cs.figer.ml.MultiLabelLRPerceptronLearner;
 import edu.washington.cs.figer.ml.MultiLabelLogisticRegression;
-import edu.washington.cs.figer.util.Debug;
+import edu.washington.cs.figer.ml.MultiLabelPerceptronNERClassifier;
+import edu.washington.cs.figer.ml.NERClassifier;
+import edu.washington.cs.figer.ml.Prediction;
 import edu.washington.cs.figer.util.FileUtil;
 import edu.washington.cs.figer.util.Timer;
 import edu.washington.cs.figer.util.X;
@@ -38,6 +49,8 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.procedure.TObjectIntProcedure;
 
 public class Main {
+	private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
 	private Main() {
 	}
 
@@ -46,7 +59,7 @@ public class Main {
 	public static DataSet train = new DataSet(), test = new DataSet();
 	public static NERFeature nerFeature = null;
 	public static String[] trainFiles = null;
-	public static String testFile = null;
+	public static String testDataLocation = null;
 	// debug variables
 	public static HashSet<String> mentions = new HashSet<String>();
 
@@ -58,9 +71,7 @@ public class Main {
 				Preprocessing.go(args[1]);
 			} else if (args.length == 3 && args[0].equals("eval")) {
 				X.prop.put("tagset", "types.map");
-				Eval.trueLabelFile = args[2];
-				Debug.setLevel(2);
-				Eval.process(args[1]).print();
+				Eval.process(args[1], args[2]).print();
 			} else {
 				showHelpMessage();
 				System.exit(-1);
@@ -72,12 +83,12 @@ public class Main {
 	}
 
 	private static void showHelpMessage() {
-		Debug.pl("1. To run the main function:");
-		Debug.pl("\t./run.sh <config_file>");
-		Debug.pl("2. To only preprocess a txt file:");
-		Debug.pl("\t./run.sh preprocess <txt_file>");
-		Debug.pl("3. To evaluate a prediction file:");
-		Debug.pl("\t./run.sh eval <pred_file> <label_file>");
+		logger.info("1. To run the main function:");
+		logger.info("\t./run.sh <config_file>");
+		logger.info("2. To only preprocess a txt file:");
+		logger.info("\t./run.sh preprocess <txt_file>");
+		logger.info("3. To evaluate a prediction file:");
+		logger.info("\t./run.sh eval <pred_file> <label_file>");
 	}
 
 	public static void run() {
@@ -86,10 +97,10 @@ public class Main {
 		model.debug = X.getBoolean("debugModel");
 
 		// read all tags
-		readTags();
+		readTags(X.tagset);
 
 		trainFiles = X.get("trainFile").split(",");
-		testFile = X.get("testFile");
+		testDataLocation = X.get("testFile");
 
 		if (X.methodS == X.PERCEPTRON) {
 			if (X.getBoolean("useModel")) {
@@ -114,40 +125,108 @@ public class Main {
 
 				timer.task = "learning";
 				timer.start();
+
 				Learner l = new MultiLabelLRPerceptronLearner();
 				LRPerceptronLearner.MAX_ITER_NUM = X.MAX_ITER_NUM;
 				LRPerceptronLearner.STEP = X.PERCEPTRON_STEP;
+				//
+				// sample a portion as dev
+				Random rand = new Random(10349);
+				Iterator<Instance> iterator = train.getInstances().iterator();
+				while (iterator.hasNext()) {
+					Instance x = iterator.next();
+					if (rand.nextDouble() > 0.8) {
+						test.add(x);
+						iterator.remove();
+					}
+				}
+				
 				l.learn(train, model);
-				Debug.dpl(train.getInstances().size()
+				testDev(test, model);
+
+				logger.debug(train.getInstances().size()
 						+ " examples for training");
-				Debug.dpl("# of weights = "
+				logger.debug("# of weights = "
 						+ ((LRParameter) model.para).lambda.length);
 				if (X.getBoolean("writeModel"))
 					model.writeModel(X.modelFile);
 				timer.endPrint();
-				train = null;
+				train.getInstances().clear();
+				test.getInstances().clear();
 				mentions.clear();
 			}
 		}
 
-		timer.start("predicting");
 		model.featureFactory.isTrain = false;
 		if (X.methodS == X.PERCEPTRON) {
 			MultiLabelLogisticRegression.prob_threshold = X
 					.getDouble("prob_threshold");
-			predict(testFile,
-					new MultiLabelPerceptronNERClassifier(model.infer),
-					new MultiLabelNERPerf(model), model);
+			if (new File(testDataLocation).isDirectory()) {
+				String[] testFiles = new File(testDataLocation).list();
+				NERClassifier classifier = new MultiLabelPerceptronNERClassifier(
+						model.infer);
+				Performance perf = new MultiLabelNERPerf(model);
+				for (String tf : testFiles) {
+					if (tf.endsWith(".txt")) {
+						timer.start("predicting " + tf);
+						if (new File(testDataLocation + "/"
+								+ tf.replace(".txt", ".out")).exists()) {
+							continue;
+						}
+						X.prop.put(
+								"outputFile",
+								testDataLocation + "/"
+										+ tf.replace(".txt", ".out"));
+						predict(testDataLocation + "/" + tf, classifier, perf,
+								model);
+						timer.endPrint();
+					}
+				}
+			} else {
+				timer.start("predicting");
+				predict(testDataLocation,
+						new MultiLabelPerceptronNERClassifier(model.infer),
+						new MultiLabelNERPerf(model), model);
+				timer.endPrint();
+			}
 		}
-		Debug.pl();
-		timer.endPrint();
+
 		if (X.getBoolean("eval")) {
-			Eval.trueLabelFile = X.get("labelFile");
-			Debug.setLevel(2);
-			Eval.process(X.get("outputFile")).print();
+			Eval.process(X.get("outputFile"), X.get("labelFile")).print();
 		}
 		mainTimer.endPrint();
 
+	}
+
+	private static void testDev(DataSet data, Model m) {
+		Timer timer = new Timer("testing dev").start();
+		MultiLabelNERPerf perf = new MultiLabelNERPerf(m);
+		int i = 0;
+		for (Instance x : data.getInstances()) {
+			if (i % 500000 == 0) {
+				logger.info("tested " + i + " instances");
+			}
+			MultiLabelInstance inst = (MultiLabelInstance) x;
+			ArrayList<Prediction> predictions = m.infer
+					.findPredictions(inst, m);
+			ArrayList<Label> labels = ((MultiLabelLogisticRegression) m)
+					.makePredictions(predictions);
+			perf.computeMetric(labels, inst.labels);
+			i++;
+		}
+		System.out.println("strict\t"
+				+ MultiLabelNERPerf.getResultString(perf.pSum, perf.pNum,
+						perf.rSum, perf.rNum));
+
+		System.out.println("loose micro\t"
+				+ MultiLabelNERPerf.getResultString(perf.pSum2, perf.pNum2,
+						perf.rSum2, perf.rNum2));
+
+		System.out.println("loose macro\t"
+				+ MultiLabelNERPerf.getResultString(perf.pSum3, perf.pNum3,
+						perf.rSum3, perf.rNum3));
+
+		timer.endPrint();
 	}
 
 	private static void initNerFeature() {
@@ -155,13 +234,13 @@ public class Main {
 		nerFeature.init();
 	}
 
-	private static void readTags() {
-		MapType.typeFile = X.tagset;
+	public static void readTags(String tagFile) {
+		MapType.typeFile = tagFile;
 		MapType.init();
 		for (String newType : MapType.mapping.values()) {
 			model.labelFactory.getLabel(newType);
 		}
-		Debug.pl("labels:\t" + model.labelFactory.allLabels);
+		logger.info("labels:\t" + model.labelFactory.allLabels);
 	}
 
 	/**
@@ -176,46 +255,105 @@ public class Main {
 	 */
 	public static void predict(String testFile, NERClassifier classifier,
 			Performance performance, Model model) {
-		Preprocessing.initPipeline(X.getBoolean("tokenized"),
-				X.getBoolean("singleSentences"));
-		Preprocessing.prepareProcess(testFile);
-
-		String[] lines = FileUtil.getTextFromFile(testFile).split("\n");
-		String[] segs = null;
-		if (!X.getBoolean("segmentation")) {
-			segs = FileUtil.getTextFromFile(X.get("inputSegments")).split(
-					"\n\n");
-			if (segs.length != lines.length) {
-				Debug.pl("ERROR", "The size of sentences" + lines.length
-						+ " is NOT equal to the size of segmented sentences="
-						+ segs.length);
-				Debug.vpl(segs[0]);
-				Debug.vpl("=========================");
-				Debug.vpl(segs[1]);
+		if (X.getBoolean("preprocess")) {
+			Preprocessing.initPipeline(X.getBoolean("tokenized"),
+					X.getBoolean("singleSentences"));
+			Preprocessing.prepareProcess(testFile);
+			String[] lines = FileUtil.getTextFromFile(testFile).split("\n");
+			String[] segs = null;
+			if (!X.getBoolean("segmentation")) {
+				segs = FileUtil.getTextFromFile(X.get("inputSegments")).split(
+						"\n\n");
+				if (segs.length != lines.length) {
+					logger.error("The size of sentences"
+							+ lines.length
+							+ " is NOT equal to the size of segmented sentences="
+							+ segs.length);
+					logger.error(segs[0]);
+					logger.error("=========================");
+					logger.error(segs[1]);
+				}
 			}
-		}
-		Preprocessing.nerFeature = nerFeature;
-		for (int i = 0; i < lines.length; ++i) {
+			Preprocessing.nerFeature = nerFeature;
+			for (int i = 0; i < lines.length; ++i) {
+				try {
+					Preprocessing.sentId = i;
+					Preprocessing.annotateImpl(lines[i]);
+					if (!X.getBoolean("segmentation")) {
+						Preprocessing.seg.setLength(0);
+						Preprocessing.seg.append(segs[i]);
+					}
+					// convert the result in pbf format
+					ArrayList<Mention> mentions = Preprocessing
+							.processCurrentSentenceForPbf();
+					predictCurrent(testFile, mentions, classifier, performance,
+							model);
+					logger.info("sent {} is done", i);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			Preprocessing.finishProcess();
+		} else {
+			Preprocessing.filePrefix = testFile.replace(".txt", "");
 			try {
-				Preprocessing.sentId = i;
-				Preprocessing.annotateImpl(lines[i]);
-				if (!X.getBoolean("segmentation")) {
+				Preprocessing.outputWriter = new BufferedWriter(
+						new OutputStreamWriter(new FileOutputStream(
+								Preprocessing.filePrefix + ".out"), "UTF-8"));
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			String[] segs = null;
+			segs = FileUtil.getTextFromFile(
+					Preprocessing.filePrefix + ".segment").split("\n\n");
+			String[] tokens = FileUtil.getTextFromFile(
+					Preprocessing.filePrefix + ".tokens").split("\n");
+			String[] postags = FileUtil.getTextFromFile(
+					Preprocessing.filePrefix + ".pos").split("\n");
+			String[] parses = FileUtil.getTextFromFile(
+					Preprocessing.filePrefix + ".parse").split("\n");
+			String[] deps = FileUtil.getTextFromFile(
+					Preprocessing.filePrefix + ".dep").split("\n");
+			Preprocessing.nerFeature = nerFeature;
+			for (int i = 0; i < segs.length; ++i) {
+				// Preprocessing.txt =
+				// public static StringBuffer txt = new StringBuffer(), dep =
+				// new StringBuffer(),
+				// parse = new StringBuffer(), seg = new StringBuffer(), pos =
+				// new StringBuffer();
+				try {
+					Preprocessing.sentId = i;
 					Preprocessing.seg.setLength(0);
 					Preprocessing.seg.append(segs[i]);
+					Preprocessing.txt.setLength(0);
+					Preprocessing.txt.append(tokens[i]);
+					Preprocessing.pos.setLength(0);
+					Preprocessing.pos.append(postags[i]);
+					Preprocessing.dep.setLength(0);
+					Preprocessing.dep.append(deps[i]);
+					Preprocessing.parse.setLength(0);
+					Preprocessing.parse.append(parses[i]);
+					// convert the result in pbf format
+					ArrayList<Mention> mentions = Preprocessing
+							.processCurrentSentenceForPbf();
+					predictCurrent(testFile, mentions, classifier, performance,
+							model);
+					logger.info("sent {} is done", i);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				// convert the result in pbf format
-				ArrayList<Mention> mentions = Preprocessing
-						.processCurrentSentenceForPbf();
-				predictCurrent(mentions, classifier, performance, model);
-			} catch (Exception e) {
-				e.printStackTrace();
+			}
+			try {
+				Preprocessing.outputWriter.close();
+			} catch (Exception e1) {
+				e1.printStackTrace();
 			}
 		}
-		Preprocessing.finishProcess();
 	}
 
-	public static void predictCurrent(ArrayList<Mention> mentionList,
-			NERClassifier classifier, Performance performance, Model model) {
+	public static void predictCurrent(String testFile,
+			ArrayList<Mention> mentionList, NERClassifier classifier,
+			Performance performance, Model model) {
 		Hashtable<String, String[][]> results = new Hashtable<String, String[][]>();
 		String filePrefix = testFile.substring(0, testFile.indexOf("."));
 		{
@@ -232,9 +370,6 @@ public class Main {
 			edu.washington.cs.figer.data.EntityProtos.Mention m = null;
 			// do predictions
 			Hashtable<TIntList, String> pool = new Hashtable<TIntList, String>();
-			int c = 0;
-			int j = 0;
-			int exist = 0;
 
 			for (int mi = 0; mi < mentionList.size(); mi++) {
 				m = mentionList.get(mi);
@@ -243,13 +378,9 @@ public class Main {
 				if (sent == null) {
 					System.err.println("sid not found");
 				}
-				j++;
 
 				String mention = StringUtils.join(m.getTokensList().toArray(),
 						' ', m.getStart(), m.getEnd());
-				if (mentions.contains(mention)) {
-					exist++;
-				}
 
 				Instance inst = (Instance) X.instanceClass.newInstance();
 				if (X.getBoolean("generateFeature")) {
@@ -270,7 +401,7 @@ public class Main {
 					entity.add(i);
 				}
 				if (X.getBoolean("printSentence")) {
-					Debug.vpl("SENTENCE@"
+					logger.debug("SENTENCE@"
 							+ m.getStart()
 							+ "-"
 							+ m.getEnd()
@@ -285,7 +416,6 @@ public class Main {
 				for (int k = m.getStart() + 1; k < m.getEnd(); k++) {
 					sent[k][1] = "I-" + plabels;
 				}
-				c++;
 				pool.clear();
 			}
 
@@ -300,7 +430,6 @@ public class Main {
 				sb.append("\n");
 				Preprocessing.outputWriter.write(sb.toString());
 			}
-			Debug.print(".");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -315,15 +444,15 @@ public class Main {
 						readPbfTrainFile(tFile, labelFreq);
 					}
 				}
-				Debug.vpl("===label frequency===");
+				logger.debug("===label frequency===");
 				labelFreq.forEachEntry(new TObjectIntProcedure<Label>() {
 					@Override
 					public boolean execute(Label arg0, int arg1) {
-						Debug.vpl(arg0 + "\t" + arg1);
+						logger.debug(arg0 + "\t" + arg1);
 						return true;
 					}
 				});
-				Debug.vpl("===END===");
+				logger.debug("===END=label frequency==");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

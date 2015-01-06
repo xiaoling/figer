@@ -21,7 +21,7 @@ public class BrownFeaturizer implements AbstractFeaturizer {
 	public Hashtable<String, String> mappingS = null;
 	public String filename = "brown-c1000.txt.gz";
 	public static int notFoundS = 0;
-	public static int[] LEN = new int[] { /* 4, 8, 12, 20 */};
+	public static int[] LEN = new int[] {  4, 8, 12, 20 };
 	private static BrownFeaturizer singleton = null;
 
 	public static ArrayList<String> getCluster(String token) {

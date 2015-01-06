@@ -1,18 +1,23 @@
 package edu.washington.cs.figer.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-import edu.washington.cs.figer.util.Debug;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 public class FeatureFactory implements Serializable {
+	private static final Logger logger = LoggerFactory
+			.getLogger(FeatureFactory.class);
 	private static final long serialVersionUID = 660660786014221315L;
 
-	public HashMap<String, Feature> featureNames = new LinkedHashMap<String, Feature>();
+	public HashMap<String, Feature> featureNames = new HashMap<String, Feature>();
 	public List<Feature> allFeatures = new ArrayList<Feature>();
 	private int totalNum = 0;
 	public boolean isTrain = true;
@@ -25,7 +30,7 @@ public class FeatureFactory implements Serializable {
 	}
 
 	public void filter(DataSet data) {
-		Debug.vpl("filtering most common features");
+		logger.debug("filtering most common features");
 		int max = 0;
 		for (int i = 0; i < allFeatures.size(); i++) {
 			if (allFeatures.get(i).freq > max)
@@ -53,7 +58,7 @@ public class FeatureFactory implements Serializable {
 			}
 		}
 		totalNum = allFeatures.size();
-		Debug.vpl("after filtering " + allFeatures.size());
+		logger.debug("after filtering " + allFeatures.size());
 	}
 
 	public Feature getFeature(String s) {
@@ -77,35 +82,23 @@ public class FeatureFactory implements Serializable {
 
 	public static void setValue(Instance inst, Feature f, String fea) {
 		if (f != null && !inst.containsIndex(f.id)) {
-			/*if (fea.startsWith("CTXT")){
-				inst.addFeature(f.id, 0.2);								
-			}else if (fea.contains("_TKN_")){
-				inst.addFeature(f.id, 0.5);
-			}else if (fea.contains("_CLUST_")){
-				inst.addFeature(f.id, 0.3);
-			}else if (fea.startsWith("SELF")){
-				if (fea.startsWith("SELF_SHP")){
-					inst.addFeature(f.id, 0.3);
-				}
-				else{
-					inst.addFeature(f.id, 0.4);
-				}
-			}else if (fea.startsWith("HEAD_SHP")){
-				inst.addFeature(f.id, 0.2);
-			}else if (fea.startsWith("CLUST_")){
-				inst.addFeature(f.id, 0.3);
-			}else*/ {
-				inst.addFeature(f.id, 1);
+			inst.addFeature(f.id, 1);
+		}
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+		if (featureNames == null || featureNames.isEmpty()) {
+			logger.info("reconstructing featureNames");
+			featureNames = new HashMap<String, Feature>();
+			for (Feature f : allFeatures) {
+				featureNames.put(f.name, f);
 			}
-			/*if (fea.startsWith("DEP_") || fea.startsWith("REVERB_")) {
-				inst.addFeature(f.id, 2);
-			}
-			else if (fea.startsWith("CLUST_") || fea.startsWith("SELF_") || fea.startsWith("GRM_")) {
-				inst.addFeature(f.id, 0.5);
-			}
-			else {
-				inst.addFeature(f.id, 1);
-			}*/
 		}
 	}
 }

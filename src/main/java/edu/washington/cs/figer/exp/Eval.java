@@ -7,18 +7,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import edu.washington.cs.figer.analysis.MapType;
 import edu.washington.cs.figer.data.Label;
 import edu.washington.cs.figer.ml.LogisticRegression;
 import edu.washington.cs.figer.ml.Model;
-import edu.washington.cs.figer.util.Debug;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 
 public class Eval {
-	public static String trueLabelFile = "true.label2";
+	private static final Logger logger = LoggerFactory.getLogger(Eval.class);
 
-	public static MultiLabelNERPerf process(String file) {
+	public static MultiLabelNERPerf process(String file, String trueLabelFile) {
 		Model model = new LogisticRegression();
 		MultiLabelNERPerf perf = new MultiLabelNERPerf(model);
 		try {
@@ -114,9 +116,9 @@ public class Eval {
 								plabels.add(model.labelFactory.getLabel(label));
 							}
 						}
-						Debug.vpl(sent.toString() + "\t" + str);
-						Debug.vpl("True labels:\t" + tlabels);
-						Debug.vpl("Pred labels:\t" + plabels);
+						logger.info(sent.toString() + "\t" + str);
+						logger.info("True labels:\t" + tlabels);
+						logger.info("Pred labels:\t" + plabels);
 						perf.update(plabels, tlabels);
 						{
 							boolean eq = true;
@@ -160,7 +162,7 @@ public class Eval {
 			}
 
 			for (String key : res.keySet()) {
-				Debug.vpl(key + "\t" + res.get(key));
+				logger.debug(key + "\t" + res.get(key));
 			}
 			reader2.close();
 			reader.close();

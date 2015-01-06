@@ -9,7 +9,7 @@ import edu.washington.cs.figer.util.X;
 public class MapType {
 	public static String typeFile = "types.map";
 	public static Hashtable<String, String> mapping = null;
-
+	
 	public static void init() {
 		if (mapping == null) {
 			if (X.get("tagset") != null) {
@@ -34,6 +34,7 @@ public class MapType {
 	 * @return
 	 */
 	public static String getMappedTypes(String str) {
+		init();
 		StringBuilder sb = new StringBuilder();
 		String[] types = str.split(",");
 		HashSet<String> set = new HashSet<String>();

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import edu.washington.cs.figer.data.DataSet;
 import edu.washington.cs.figer.data.Instance;
-import edu.washington.cs.figer.util.Debug;
 
 public class LogisticRegressionTest {
 
@@ -30,7 +29,7 @@ public class LogisticRegressionTest {
 		ds.add(inst);
 		logreg.learner.learn(ds, logreg);
 		for (double d:((LRParameter)logreg.para).lambda) {
-			Debug.pl(""+d);
+			System.out.println(""+d);
 		}
 		assertEquals(1, ((LRParameter)logreg.para).lambda[0], 1e-8);
 		assertEquals(-1, ((LRParameter)logreg.para).lambda[1], 1e-8);

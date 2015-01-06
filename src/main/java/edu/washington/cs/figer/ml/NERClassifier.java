@@ -1,10 +1,9 @@
-package edu.washington.cs.figer.analysis;
+package edu.washington.cs.figer.ml;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+
 import edu.washington.cs.figer.data.Instance;
-import edu.washington.cs.figer.ml.Model;
-import edu.washington.cs.figer.ml.Prediction;
 import gnu.trove.list.TIntList;
 
 public abstract class NERClassifier{

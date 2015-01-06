@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import edu.washington.cs.figer.data.DataSet;
 import edu.washington.cs.figer.data.MultiLabelInstance;
-import edu.washington.cs.figer.util.Debug;
 
 public class MultiLabelLogisticRegressionTest {
 
@@ -33,7 +32,7 @@ public class MultiLabelLogisticRegressionTest {
 		ds.add(inst);
 		logreg.learner.learn(ds, logreg);
 		for (double d : ((LRParameter) logreg.para).lambda) {
-			Debug.pl("" + d);
+			System.out.println("" + d);
 		}
 		// TODO verify the following values are reasonable.
 		assertEquals(1, ((LRParameter) logreg.para).lambda[0], 1e-8);

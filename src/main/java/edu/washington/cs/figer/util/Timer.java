@@ -1,7 +1,11 @@
 package edu.washington.cs.figer.util;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 
 public class Timer {
+	private static final Logger logger = LoggerFactory.getLogger(Timer.class);
 	public String task = "it";
 	public long duration = 0;
 	public long time = 0;
@@ -12,7 +16,7 @@ public class Timer {
 		return start();
 	}
 	public Timer start(){
-		Debug.dpl("[TIMING]"+task+" starts...");
+		logger.info(task+" starts...");
 		duration = 0;
 		time = System.currentTimeMillis();
 		return this;
@@ -30,7 +34,7 @@ public class Timer {
 		duration += (System.currentTimeMillis() - time);
 	}
 	public void print(){
-		Debug.dpl("[TIMING]"+task + " takes "+ (duration/1000) +" seconds.");
+		logger.info(task + " takes "+ (duration/1000) +" seconds.");
 	}
 	public void endPrint(){
 		end();

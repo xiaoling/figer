@@ -1,11 +1,14 @@
 package edu.washington.cs.figer.util;
 
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
 import edu.washington.cs.figer.data.Instance;
 import gnu.trove.list.TDoubleList;
 import gnu.trove.list.TIntList;
 
 public class V {
-
+	private static final Logger logger = LoggerFactory.getLogger(V.class);
 	public static double sumprod(Instance x, double[][] w, int cl) {
 		return sumprod(x.getFeatureIndex(), x.getFeatureValue(), w, cl);
 	}
@@ -17,17 +20,17 @@ public class V {
 	public static double sumprod(TIntList fi, TDoubleList fv, double[][] w,
 			int cl) {
 		if (fi == null || fv == null || w == null) {
-			Debug.dpl("[EXCEPTION]sumprod(" + fi + ", " + fv + "," + w
+			logger.warn("[EXCEPTION]sumprod(" + fi + ", " + fv + "," + w
 					+ ")@V has null argument.");
 			return 0;
 		}
 		if (fi.size() != fv.size()) {
-			Debug.dpl("[EXCEPTION]sumprod(fi=" + fi.size() + ", fv="
+			logger.warn("[EXCEPTION]sumprod(fi=" + fi.size() + ", fv="
 					+ fv.size() + ")@V has two lists in different lengths.");
 			return 0;
 		}
 		if (cl > w.length || cl < 0) {
-			Debug.dpl("[EXCEPTION]sumprod(cl=" + cl + ", w.len=" + w.length
+			logger.warn("[EXCEPTION]sumprod(cl=" + cl + ", w.len=" + w.length
 					+ ")@V has different lengths.");
 			return 0;
 		}
@@ -41,17 +44,17 @@ public class V {
 	public static double sumprod(TIntList fi, TDoubleList fv, double[] w,
 			int start) {
 		if (fi == null || fv == null || w == null) {
-			Debug.dpl("[EXCEPTION]sumprod(" + fi + ", " + fv + "," + w
+			logger.warn("[EXCEPTION]sumprod(" + fi + ", " + fv + "," + w
 					+ ")@V has null argument.");
 			return 0;
 		}
 		if (fi.size() != fv.size()) {
-			Debug.dpl("[EXCEPTION]sumprod(fi=" + fi.size() + ", fv="
+			logger.warn("[EXCEPTION]sumprod(fi=" + fi.size() + ", fv="
 					+ fv.size() + ")@V has two lists in different lengths.");
 			return 0;
 		}
 		if (start > w.length || start < 0) {
-			Debug.dpl("[EXCEPTION]sumprod(start=" + start + ", w.len="
+			logger.warn("[EXCEPTION]sumprod(start=" + start + ", w.len="
 					+ w.length + ")@V has different lengths.");
 			return 0;
 		}
@@ -72,12 +75,12 @@ public class V {
 	 */
 	public static double inner(double[] g, double[] g2) {
 		if (g == null || g2 == null) {
-			Debug.dpl("[EXCEPTION]inner(" + g + ", " + g2
+			logger.warn("[EXCEPTION]inner(" + g + ", " + g2
 					+ ")@V has null argument.");
 			return 0;
 		}
 		if (g.length != g2.length) {
-			Debug.dpl("[EXCEPTION]inner(" + g.length + ", " + g2.length
+			logger.warn("[EXCEPTION]inner(" + g.length + ", " + g2.length
 					+ ")@V has two arrays in different lengths.");
 			return 0;
 		}
