@@ -8,6 +8,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Figer Web Service</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/figer</url-pattern>
     </servlet-mapping>
 </web-app>

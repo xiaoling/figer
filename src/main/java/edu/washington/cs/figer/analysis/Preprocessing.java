@@ -42,14 +42,13 @@ import edu.stanford.nlp.trees.TreeReader;
 import edu.stanford.nlp.trees.TreeReaderFactory;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.trees.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import edu.washington.cs.figer.analysis.feature.NERFeature;
 import edu.washington.cs.figer.data.EntityProtos.Mention;
 import edu.washington.cs.figer.data.EntityProtos.Mention.Dependency;
 import edu.washington.cs.figer.ml.Model;
 import edu.washington.cs.figer.util.FileUtil;
+import edu.washington.cs.figer.util.StanfordDependencyResolver;
 import edu.washington.cs.figer.util.Timer;
 import edu.washington.cs.figer.util.X;
 import gnu.trove.list.TIntList;
@@ -579,8 +578,7 @@ public class Preprocessing {
       parse.setLength(0);
       parse.append(tree.toString());
       // this is the Stanford dependency graph of the current sentence
-      SemanticGraph dependencies = sentence.get(CollapsedDependenciesAnnotation.class);
-      String deps = dependencies.toList();
+      String deps = StanfordDependencyResolver.getString(sentence);
       wdep.write(deps.replace("\n", "\t") + "\n");
       dep.setLength(0);
       dep.append(deps.replace("\n", "\t"));

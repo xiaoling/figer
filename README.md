@@ -1,4 +1,4 @@
-Fine-Grained Entity Recognizer
+Fine-Grained Entity Recognizer (FIGER)
 =============================
 
 This distribution contains the source code for the experiments presented in the following research publication:
@@ -7,7 +7,7 @@ This distribution contains the source code for the experiments presented in the 
     "Fine-Grained Entity Recognition", 
     in Proceedings OF THE TWENTY-SIXTH AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE (AAAI), 2012.
 
-# Download the model file
+## Download the model file
 
 One can test the trained model on the evaluation data or new data as they wish. 
 
@@ -27,7 +27,15 @@ To make predictions on new data, please see `package edu.washington.cs.figer.Fig
 
     $ sbt "runMain edu.washington.cs.figer.FigerSystem <text_file>"
 
-# Training Data
+## A simple web interface
+
+Run 
+
+    $ sbt ~container:start
+
+and go to `localhost:8080/index.html` for a simple web demo.
+
+## Training Data
 
 The training data `train.tar.gz` is serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
 

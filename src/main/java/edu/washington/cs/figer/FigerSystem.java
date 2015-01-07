@@ -1,5 +1,6 @@
 package edu.washington.cs.figer;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,8 +20,6 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.trees.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.semgraph.SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.StringUtils;
@@ -36,6 +35,8 @@ import edu.washington.cs.figer.ml.Model;
 import edu.washington.cs.figer.ml.MultiLabelLogisticRegression;
 import edu.washington.cs.figer.ml.MultiLabelPerceptronNERClassifier;
 import edu.washington.cs.figer.ml.NERClassifier;
+import edu.washington.cs.figer.util.FileUtil;
+import edu.washington.cs.figer.util.StanfordDependencyResolver;
 import edu.washington.cs.figer.util.Timer;
 import edu.washington.cs.figer.util.X;
 import gnu.trove.list.TIntList;
@@ -121,9 +122,7 @@ public class FigerSystem {
 		m.setSentid(sentId);
 
 		// dependency
-		SemanticGraph dependencies = sentAnn
-				.get(CollapsedDependenciesAnnotation.class);
-		String depStr = dependencies.toList();
+		String depStr = StanfordDependencyResolver.getString(sentAnn);
 		if (depStr != null) {
 			for (String d : depStr.split("\t")) {
 				Matcher match = Preprocessing.depPattern.matcher(d);
@@ -165,7 +164,7 @@ public class FigerSystem {
 			Arrays.asList(new String[] { "PERSON", "ORGANIZATION", "LOCATION",
 					"MISC", "O" }));
 
-	private static List<Pair<Integer, Integer>> getNamedEntityMentions(
+	public static List<Pair<Integer, Integer>> getNamedEntityMentions(
 			CoreMap sentence) {
 		List<Pair<Integer, Integer>> offsets = new ArrayList<Pair<Integer, Integer>>();
 		String prevTag = "O";
@@ -204,6 +203,7 @@ public class FigerSystem {
 		System.out.println("sbt \"runMain edu.washington.cs.figer.FigerSystem [config_file] text_file\"");
 		System.out.println("    [config_file] is optional with a default value \"config/figer.conf\"");
 	}
+
 	public static void main(String[] args) {
 		String textFile = null;
 		if (args.length == 1) {
@@ -222,7 +222,7 @@ public class FigerSystem {
 
 		// preprocess the text
 		Annotation annotation = new Annotation(
-				"The Heat will play against Spurs tomorrow.\nSeattle beat Portland .");
+				FileUtil.getTextFromFile(textFile));
 		Preprocessing.pipeline.annotate(annotation);
 
 		// for each sentence

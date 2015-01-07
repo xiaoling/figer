@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -15,7 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.stanford.nlp.util.Pair;
 import edu.washington.cs.figer.analysis.MapType;
 import edu.washington.cs.figer.analysis.Preprocessing;
 import edu.washington.cs.figer.analysis.feature.NERFeature;
@@ -379,8 +377,8 @@ public class Main {
 					System.err.println("sid not found");
 				}
 
-				String mention = StringUtils.join(m.getTokensList().toArray(),
-						' ', m.getStart(), m.getEnd());
+//				String mention = StringUtils.join(m.getTokensList().toArray(),
+//						' ', m.getStart(), m.getEnd());
 
 				Instance inst = (Instance) X.instanceClass.newInstance();
 				if (X.getBoolean("generateFeature")) {
