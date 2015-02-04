@@ -27,6 +27,10 @@ To make predictions on new data, please see `package edu.washington.cs.figer.Fig
 
     $ sbt "runMain edu.washington.cs.figer.FigerSystem <text_file>"
 
+## Make a stand-alone jar
+
+    $ sbt assembly
+
 ## A simple web interface
 
 Run 
