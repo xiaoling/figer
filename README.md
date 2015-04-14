@@ -1,11 +1,11 @@
 Fine-Grained Entity Recognizer (FIGER)
 =============================
 
-This distribution contains the source code for the experiments presented in the following research publication:
+This distribution contains the source code for the experiments presented in the following research publication ([PDF](http://xiaoling.github.com/pubs/ling-aaai12.pdf)):
 
     Xiao Ling and Daniel S. Weld (2012). 
     "Fine-Grained Entity Recognition", 
-    in Proceedings OF THE TWENTY-SIXTH AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE (AAAI), 2012. [PDF](http://xiaoling.github.com/pubs/ling-aaai12.pdf)
+    in Proceedings OF THE TWENTY-SIXTH AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE (AAAI), 2012. 
 
 ## Download the model file
 
@@ -26,6 +26,10 @@ To run the experiments in the AAAI-12 paper, you can proceed as follows:
 To make predictions on new data, please see `package edu.washington.cs.figer.FigerSystem` for example code or run:
 
     $ sbt "runMain edu.washington.cs.figer.FigerSystem <text_file>"
+
+## Make a stand-alone jar
+
+    $ sbt assembly
 
 ## A simple web interface
 
