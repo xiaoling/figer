@@ -15,6 +15,10 @@ Run `./downloadModel.sh` to download the [Model](https://drive.google.com/open?i
 
 A better [model](https://drive.google.com/open?id=0B52yRXcdpG6Mbm1TdHhYdVBmSnM) has been trained and can be fetched by `./downloadModel.sh new`. Change the config value accordingly.
 
+## Requirement
+
+sbt >= 0.13.0
+
 ## Replicate the experiments
 
 To run the experiments in the AAAI-12 paper, you can proceed as follows:
