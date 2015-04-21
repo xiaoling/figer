@@ -200,8 +200,10 @@ public class FigerSystem {
 	}
 
 	private static void usage() {
-		System.out.println("sbt \"runMain edu.washington.cs.figer.FigerSystem [config_file] text_file\"");
-		System.out.println("    [config_file] is optional with a default value \"config/figer.conf\"");
+		System.out
+				.println("sbt \"runMain edu.washington.cs.figer.FigerSystem [config_file] text_file\"");
+		System.out
+				.println("    [config_file] is optional with a default value \"config/figer.conf\"");
 	}
 
 	public static void main(String[] args) {
@@ -221,27 +223,32 @@ public class FigerSystem {
 		Preprocessing.initPipeline();
 
 		// preprocess the text
-		Annotation annotation = new Annotation(
-				FileUtil.getTextFromFile(textFile));
-		Preprocessing.pipeline.annotate(annotation);
+		List<String> list = FileUtil.getLinesFromFile(textFile);
+		for (int i = 0; i < list.size(); i++) {
+			Annotation annotation = new Annotation(list.get(i));
+			Preprocessing.pipeline.annotate(annotation);
 
-		// for each sentence
-		int sentId = 0;
-		for (CoreMap sentence : annotation.get(SentencesAnnotation.class)) {
-			System.out.println("[s" + sentId + "]"
-					+ sentence.get(TextAnnotation.class));
-			List<Pair<Integer, Integer>> entityMentionOffsets = getNamedEntityMentions(sentence);
-			for (Pair<Integer, Integer> offset : entityMentionOffsets) {
-				String label = sys.predict(annotation, sentId, offset.first,
-						offset.second);
-				String mention = StringUtils
-						.joinWithOriginalWhiteSpace(sentence.get(
-								TokensAnnotation.class).subList(offset.first,
-								offset.second));
-				System.out.println("[s" + sentId + "]mention = " + mention
-						+ ", pred = " + label);
+			// for each sentence
+			int sentId = 0;
+			for (CoreMap sentence : annotation.get(SentencesAnnotation.class)) {
+				System.out.println("[l"+i+"][s" + sentId + "]tokenized sentence="
+						+ StringUtils
+                                                        .joinWithOriginalWhiteSpace(sentence.get(
+                                                                        TokensAnnotation.class));
+				List<Pair<Integer, Integer>> entityMentionOffsets = getNamedEntityMentions(sentence);
+				for (Pair<Integer, Integer> offset : entityMentionOffsets) {
+			//		String label = sys.predict(annotation, sentId,
+			//				offset.first, offset.second);
+					String mention = StringUtils
+							.joinWithOriginalWhiteSpace(sentence.get(
+									TokensAnnotation.class).subList(
+									offset.first, offset.second));
+					System.out.println("[l"+i+"][s" + sentId + "]mention" + mention
+							+ "(" + offset.first +","+offset.second)+" = "+mention
+							+ ", pred = " + label);
+				}
+				sentId++;
 			}
-			sentId++;
 		}
 	}
 
