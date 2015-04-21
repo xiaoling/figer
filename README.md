@@ -27,6 +27,10 @@ To make predictions on new data, please see `package edu.washington.cs.figer.Fig
 
     $ sbt "runMain edu.washington.cs.figer.FigerSystem <text_file>"
 
+Alternatively, you can change the parameter values (e.g. the input file name) in `config/figer.conf` and get a more structured output by running:
+    
+    $ ./run.sh "config/figer.conf"
+
 ## Make a stand-alone jar
 
     $ sbt assembly
