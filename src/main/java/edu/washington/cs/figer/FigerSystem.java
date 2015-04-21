@@ -231,21 +231,25 @@ public class FigerSystem {
 			// for each sentence
 			int sentId = 0;
 			for (CoreMap sentence : annotation.get(SentencesAnnotation.class)) {
-				System.out.println("[l"+i+"][s" + sentId + "]tokenized sentence="
-						+ StringUtils
-                                                        .joinWithOriginalWhiteSpace(sentence.get(
-                                                                        TokensAnnotation.class));
+				System.out.println("[l"
+						+ i
+						+ "][s"
+						+ sentId
+						+ "]tokenized sentence="
+						+ StringUtils.joinWithOriginalWhiteSpace(sentence
+								.get(TokensAnnotation.class)));
 				List<Pair<Integer, Integer>> entityMentionOffsets = getNamedEntityMentions(sentence);
 				for (Pair<Integer, Integer> offset : entityMentionOffsets) {
-			//		String label = sys.predict(annotation, sentId,
-			//				offset.first, offset.second);
+					String label = sys.predict(annotation, sentId,
+							offset.first, offset.second);
 					String mention = StringUtils
 							.joinWithOriginalWhiteSpace(sentence.get(
 									TokensAnnotation.class).subList(
 									offset.first, offset.second));
-					System.out.println("[l"+i+"][s" + sentId + "]mention" + mention
-							+ "(" + offset.first +","+offset.second)+" = "+mention
-							+ ", pred = " + label);
+					System.out.println("[l" + i + "][s" + sentId + "]mention"
+							+ mention + "(" + offset.first + ","
+							+ offset.second + ") = " + mention + ", pred = "
+							+ label);
 				}
 				sentId++;
 			}
