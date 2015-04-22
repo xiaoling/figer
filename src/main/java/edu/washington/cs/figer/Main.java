@@ -353,7 +353,7 @@ public class Main {
 			ArrayList<Mention> mentionList, NERClassifier classifier,
 			Performance performance, Model model) {
 		Hashtable<String, String[][]> results = new Hashtable<String, String[][]>();
-		String filePrefix = testFile.substring(0, testFile.indexOf("."));
+		String filePrefix = testFile.substring(0, testFile.lastIndexOf("."));
 		String[] sents = Preprocessing.txt.toString().split("\n");
 		for (int s = 0; s < sents.length; s++) {
 			String[] tokens = sents[s].split(" ");
@@ -375,7 +375,8 @@ public class Main {
 				String sid = m.getFileid() + "\t" + m.getSentid();
 				String[][] sent = results.get(sid);
 				if (sent == null) {
-					System.err.println("sid not found");
+					logger.error("sid [{}] not recognized for finding its output sentence");
+					continue;
 				}
 
 				// String mention =
