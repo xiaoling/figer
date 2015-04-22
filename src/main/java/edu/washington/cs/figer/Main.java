@@ -354,14 +354,15 @@ public class Main {
 			Performance performance, Model model) {
 		Hashtable<String, String[][]> results = new Hashtable<String, String[][]>();
 		String filePrefix = testFile.substring(0, testFile.indexOf("."));
-		{
-			String[] tokens = Preprocessing.txt.toString().split(" ");
+		String[] sents = Preprocessing.txt.toString().split("\n");
+		for (int s = 0; s < sents.length; s++) {
+			String[] tokens = sents[s].split(" ");
 			String[][] sent = new String[tokens.length][2];
 			for (int k = 0; k < tokens.length; k++) {
 				sent[k][0] = tokens[k];
 				sent[k][1] = "O";
 			}
-			String sid = filePrefix + "\t" + Preprocessing.sentId;
+			String sid = filePrefix + "\t" + s + "\t" + Preprocessing.sentId;
 			results.put(sid, sent);
 		}
 		try {
@@ -377,8 +378,9 @@ public class Main {
 					System.err.println("sid not found");
 				}
 
-//				String mention = StringUtils.join(m.getTokensList().toArray(),
-//						' ', m.getStart(), m.getEnd());
+				// String mention =
+				// StringUtils.join(m.getTokensList().toArray(),
+				// ' ', m.getStart(), m.getEnd());
 
 				Instance inst = (Instance) X.instanceClass.newInstance();
 				if (X.getBoolean("generateFeature")) {
@@ -418,9 +420,9 @@ public class Main {
 			}
 
 			// write results
-			{
+			for (int s = 0; s < sents.length; s++) {
 				StringBuilder sb = new StringBuilder();
-				String[][] sent = results.get(filePrefix + "\t"
+				String[][] sent = results.get(filePrefix + "\t" + s + "\t"
 						+ Preprocessing.sentId);
 				for (int k = 0; k < sent.length; k++) {
 					sb.append(sent[k][0] + "\t" + sent[k][1] + "\n");
