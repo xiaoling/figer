@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -32,7 +32,7 @@ public class FileUtil {
 	}
 
 	public static List<String> getLinesFromFile(String filename) {
-		LinkedList<String> lines = null;
+		ArrayList<String> lines = null;
 		try {
 			InputStream in = new FileInputStream(filename);
 			if (filename.endsWith(".gz")) {
@@ -40,7 +40,7 @@ public class FileUtil {
 			}
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					in, "UTF-8"));
-			lines = new LinkedList<String>();
+			lines = new ArrayList<String>();
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				lines.add(line);

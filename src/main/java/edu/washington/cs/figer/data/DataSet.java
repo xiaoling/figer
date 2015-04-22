@@ -1,13 +1,13 @@
 package edu.washington.cs.figer.data;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataSet {
 
 	String filename = null;
 
-	private List<Instance> instances = new LinkedList<Instance>();
+	private List<Instance> instances = new ArrayList<Instance>();
 
 	public DataSet() {
 	}
