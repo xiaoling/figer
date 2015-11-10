@@ -49,7 +49,15 @@ and go to `localhost:8080/index.html` for a simple web demo.
 
 ## Training Data
 
-The training data `train.tar.gz` is serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
+The training data `train.data.gz` is gzipped and serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
 
-Download [link](https://drive.google.com/open?id=0B52yRXcdpG6MdkNEaE5IVzkxR0k)
+Download [link](https://drive.google.com/open?id=0B52yRXcdpG6MMnRNV3dTdGdYQ2M)
 
+In `config/figer.conf`, make the following changes:
+    
+    useModel=false
+    modelFile=<the output model file>
+    
+    trainFile=<training file> # the training file has to follow the specs from `entity.proto`. See `train.data.gz` for example
+
+Then run `./run.sh config/figer.conf` to train a new model (It will need over 10G memory and about an hour to finish).
