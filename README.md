@@ -61,3 +61,7 @@ In `config/figer.conf`, make the following changes:
     trainFile=<training file> # the training file has to follow the specs from `entity.proto`. See `train.data.gz` for example
 
 Then run `./run.sh config/figer.conf` to train a new model (It will need over 10G memory and about an hour to finish).
+
+### Mapping between Freebase MIDs and Wikipedia Titles
+
+A mapping file from mids to titles is available [here](https://drive.google.com/open?id=0B52yRXcdpG6MaHA5ZW9CZ21MbVk).
