@@ -51,4 +51,14 @@ public class MentionReader {
 			e.printStackTrace();
 		}
 	}
+	public static void main(String[] args) {
+	    MentionReader reader = MentionReader.getMentionReader("train.data.gz");
+	    int c = 0;
+	    Mention mention = null;
+	    while ((mention = reader.readMention())!=null) {
+                c++;
+	    }
+	    reader.close();
+	    System.out.println(c);
+	}
 }
