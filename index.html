@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>FIGER by xiaoling</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>FIGER</h1>
+        <p>Fine-Grained Entity Recognizer</p>
+
+        <p class="view"><a href="https://github.com/xiaoling/figer">View the Project on GitHub <small>xiaoling/figer</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/xiaoling/figer/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/xiaoling/figer/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/xiaoling/figer">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="fine-grained-entity-recognizer-figer" class="anchor" href="#fine-grained-entity-recognizer-figer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fine-Grained Entity Recognizer (FIGER)</h1>
+
+<p>This distribution contains the source code for the experiments presented in the following research publication (<a href="http://xiaoling.github.com/pubs/ling-aaai12.pdf">PDF</a>):</p>
+
+<pre><code>Xiao Ling and Daniel S. Weld (2012). 
+"Fine-Grained Entity Recognition", 
+in Proceedings OF THE TWENTY-SIXTH AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE (AAAI), 2012. 
+</code></pre>
+
+<h2>
+<a id="download-the-model-file" class="anchor" href="#download-the-model-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Download the model file</h2>
+
+<p>One can test the trained model on the evaluation data or new data as they wish. </p>
+
+<p>Run <code>./downloadModel.sh</code> to download the <a href="https://drive.google.com/open?id=0B52yRXcdpG6MWlVXaTFXWVZQYjg">Model</a> and save it at the root directory. </p>
+
+<p>A better <a href="https://drive.google.com/open?id=0B52yRXcdpG6Mbm1TdHhYdVBmSnM">model</a> has been trained and can be fetched by <code>./downloadModel.sh new</code>. Change the config value accordingly.</p>
+
+<h2>
+<a id="requirement" class="anchor" href="#requirement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirement</h2>
+
+<p>sbt &gt;= 0.13.0</p>
+
+<h2>
+<a id="replicate-the-experiments" class="anchor" href="#replicate-the-experiments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Replicate the experiments</h2>
+
+<p>To run the experiments in the AAAI-12 paper, you can proceed as follows:</p>
+
+<pre><code>$ ./run.sh "aaai/exp.conf" &amp;&gt; aaai/exp.log
+</code></pre>
+
+<h2>
+<a id="run-figer-on-new-data" class="anchor" href="#run-figer-on-new-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Run FIGER on new data</h2>
+
+<p>To make predictions on new data, please see <code>package edu.washington.cs.figer.FigerSystem</code> for example code or run:</p>
+
+<pre><code>$ sbt "runMain edu.washington.cs.figer.FigerSystem &lt;text_file&gt;"
+</code></pre>
+
+<p>Alternatively, you can change the parameter values (e.g. the input file name) in <code>config/figer.conf</code> and get a more structured output by running:</p>
+
+<pre><code>$ ./run.sh "config/figer.conf"
+</code></pre>
+
+<h2>
+<a id="make-a-stand-alone-jar" class="anchor" href="#make-a-stand-alone-jar" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Make a stand-alone jar</h2>
+
+<pre><code>$ sbt assembly
+</code></pre>
+
+<h2>
+<a id="a-simple-web-interface" class="anchor" href="#a-simple-web-interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>A simple web interface</h2>
+
+<p>Run </p>
+
+<pre><code>$ sbt ~container:start
+</code></pre>
+
+<p>and go to <code>localhost:8080/index.html</code> for a simple web demo.</p>
+
+<h2>
+<a id="training-data" class="anchor" href="#training-data" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Training Data</h2>
+
+<p>The training data <code>train.data.gz</code> is gzipped and serialized in <a href="http://code.google.com/p/protobuf/">Protocol Buffer</a>. Please see <code>entity.proto</code> in the code package for the definitions.</p>
+
+<p>Download <a href="https://drive.google.com/open?id=0B52yRXcdpG6MMnRNV3dTdGdYQ2M">link</a></p>
+
+<p>In <code>config/figer.conf</code>, make the following changes:</p>
+
+<pre><code>useModel=false
+modelFile=&lt;the output model file&gt;
+
+trainFile=&lt;training file&gt; # the training file has to follow the specs from `entity.proto`. See `train.data.gz` for example
+</code></pre>
+
+<p>Then run <code>./run.sh config/figer.conf</code> to train a new model (It will need over 10G memory and about an hour to finish).</p>
+
+<h3>
+<a id="mapping-between-freebase-mids-and-wikipedia-titles" class="anchor" href="#mapping-between-freebase-mids-and-wikipedia-titles" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Mapping between Freebase MIDs and Wikipedia Titles</h3>
+
+<p>A mapping file from mids to titles is available <a href="https://drive.google.com/open?id=0B52yRXcdpG6MaHA5ZW9CZ21MbVk">here</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/xiaoling">xiaoling</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
