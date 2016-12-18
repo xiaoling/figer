@@ -58,8 +58,8 @@ In `config/figer.conf`, make the following changes:
 
     useModel=false
     modelFile=<the output model file>
-
-    trainFile=<training file> # the training file has to follow the specs from `entity.proto`. See `train.data.gz` for example
+    # the training file has to follow the specs from `entity.proto`. See `train.data.gz` for example
+    trainFile=<training file>
 
 Then run `./run.sh config/figer.conf` to train a new model (It will need over 10G memory and about an hour to finish).
 
