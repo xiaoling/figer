@@ -50,9 +50,7 @@ and go to `localhost:8080/index.html` for a simple web demo.
 
 ## Training Data
 
-The training data `train.data.gz` is gzipped and serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see `entity.proto` in the code package for the definitions.
-
-Download [link](https://drive.google.com/open?id=0B52yRXcdpG6MMnRNV3dTdGdYQ2M)
+The training data `train.data.gz` (Download [link](https://drive.google.com/open?id=0B52yRXcdpG6MMnRNV3dTdGdYQ2M)) is gzipped and serialized in [Protocol Buffer](http://code.google.com/p/protobuf/). Please see [entity.proto](entity.proto) in the code package for the definitions. Each `Mention` represents an entity mention defined by its token offsets together with the tokens in the sentence where the mention appears. The `labels` field shows the Freebase types of the underlying entity for the mention. Use the mapping in the next section to get the corresponding FIGER types.
 
 In `config/figer.conf`, make the following changes:
 
