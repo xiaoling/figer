@@ -8,3 +8,6 @@ mergeStrategy in assembly <<= (mergeStrategy in assembly) { (old) =>
     case x => old(x)
   }
 }
+
+mainClass in assembly := Some("edu.washington.cs.figer.FigerSystem")
+

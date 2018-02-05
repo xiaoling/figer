@@ -39,6 +39,8 @@ Alternatively, you can change the parameter values (e.g. the input file name) in
 ## Make a stand-alone jar
 
     $ sbt assembly
+    # the actual path might be different
+    $ java -jar ./target/scala-2.10/figer-assembly-0.jar <text_file>
 
 ## A simple web interface
 
